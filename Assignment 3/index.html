@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Color Dashboard</title>
+
+<style>
+
+/* ===== GLOBAL ===== */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    min-height:100vh;
+    color:white;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:20px;
+}
+
+/* ===== HEADER ===== */
+header{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+header h1{
+    font-size:2.8rem;
+    margin-bottom:10px;
+}
+
+/* ===== CLOCK ===== */
+#clock{
+    font-size:1.2rem;
+    opacity:0.9;
+}
+
+/* ===== INPUT SECTION ===== */
+.input-section{
+    margin:20px 0;
+}
+
+input{
+    padding:10px 15px;
+    border-radius:25px;
+    border:none;
+    width:220px;
+    font-size:1rem;
+}
+
+button{
+    padding:10px 18px;
+    border:none;
+    border-radius:25px;
+    margin-left:8px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.05);
+}
+
+.primary-btn{
+    background:white;
+    color:#333;
+}
+
+.reset-btn{
+    background:#ff4d4d;
+    color:white;
+}
+
+/* ===== DASHBOARD GRID ===== */
+.dashboard{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+    width:100%;
+    max-width:1000px;
+    margin-top:20px;
+}
+
+/* ===== CARDS ===== */
+.card{
+    background:rgba(255,255,255,0.1);
+    backdrop-filter:blur(10px);
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 10px 20px rgba(0,0,0,0.2);
+    text-align:center;
+}
+
+/* ===== COLOR BOXES ===== */
+.box-container{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+    margin-top:15px;
+}
+
+.box{
+    padding:30px;
+    border-radius:12px;
+    background:white;
+    color:#333;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.4s;
+}
+
+.box:hover{
+    transform:translateY(-8px);
+}
+
+/* ===== FOOTER ===== */
+footer{
+    margin-top:30px;
+    opacity:0.8;
+    text-align:center;
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:600px){
+    header h1{
+        font-size:2rem;
+    }
+}
+
+</style>
+</head>
+<body>
+
+<header>
+    <h1 id="greeting">Hello</h1>
+    <div id="clock"></div>
+</header>
+
+<div class="input-section">
+    <input type="text" id="nameInput" placeholder="Enter your name">
+    <button class="primary-btn" onclick="greetUser()">Greet Me</button>
+    <button class="reset-btn" onclick="resetAll()">Reset</button>
+</div>
+
+<div class="dashboard">
+
+    <!-- USER PROFILE CARD -->
+    <div class="card">
+        <h2>User Profile</h2>
+        <p id="userDisplay">No user logged in</p>
+        <p><strong>Selected Color:</strong> <span id="selectedColor">None</span></p>
+        <p><strong>Total Clicks:</strong> <span id="clickCount">0</span></p>
+    </div>
+
+    <!-- COLOR BOX CARD -->
+    <div class="card">
+        <h2>Choose a Color</h2>
+        <div class="box-container">
+            <div class="box" onclick="changeColor(this)">Red</div>
+            <div class="box" onclick="changeColor(this)">Blue</div>
+            <div class="box" onclick="changeColor(this)">Green</div>
+            <div class="box" onclick="changeColor(this)">Yellow</div>
+        </div>
+    </div>
+
+    <!-- ACTIVITY CARD -->
+    <div class="card">
+        <h2>Activity Log</h2>
+        <p id="activity">No activity yet</p>
+    </div>
+
+</div>
+
+<footer>
+    <p>Interactive Dashboard Project | Built with HTML, CSS & JavaScript</p>
+</footer>
+
+<script>
+
+/* ===== LIVE CLOCK ===== */
+function updateClock(){
+    let now = new Date();
+    document.getElementById("clock").innerText = now.toLocaleTimeString();
+}
+setInterval(updateClock,1000);
+
+/* ===== VARIABLES ===== */
+let clickCounter = 0;
+
+/* ===== GREETING FUNCTION ===== */
+function greetUser(){
+    let name = document.getElementById("nameInput").value.trim();
+    if(name === ""){
+        alert("Please enter your name!");
+        return;
+    }
+
+    document.getElementById("greeting").innerText = "Hello, " + name + " 👋";
+    document.getElementById("userDisplay").innerText = name;
+    localStorage.setItem("username", name);
+}
+
+/* ===== LOAD SAVED USER ===== */
+window.onload = function(){
+    let savedName = localStorage.getItem("username");
+    if(savedName){
+        document.getElementById("greeting").innerText = "Hello, " + savedName + " 👋";
+        document.getElementById("userDisplay").innerText = savedName;
+    }
+}
+
+/* ===== COLOR CHANGE FUNCTION ===== */
+function changeColor(element){
+    let colorName = element.innerText.toLowerCase();
+
+    element.style.backgroundColor = colorName;
+    element.style.color = "white";
+
+    document.getElementById("selectedColor").innerText = colorName;
+    document.body.style.background = colorName;
+
+    clickCounter++;
+    document.getElementById("clickCount").innerText = clickCounter;
+
+    document.getElementById("activity").innerText =
+        "You selected " + colorName + " color.";
+}
+
+/* ===== RESET FUNCTION ===== */
+function resetAll(){
+    location.reload();
+}
+
+</script>
+
+</body>
+</html>
